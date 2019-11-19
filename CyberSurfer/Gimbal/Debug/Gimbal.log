@@ -1,0 +1,15 @@
+﻿  AppClass.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  AppClassControls.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  AppClassGUI.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  AppClassMain.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  ControllerConfiguration.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\ControllerConfiguration.h(8): fatal error C1083: Cannot open include file: 'SFML\Window.hpp': No such file or directory
+  Main.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  MyMesh.cpp
+C:\Users\Caleb\Desktop\Gimbal\Gimbal\Definitions.h(15): fatal error C1083: Cannot open include file: 'Simplex\Simplex.h': No such file or directory
+  Generating Code...

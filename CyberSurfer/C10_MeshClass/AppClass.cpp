@@ -9,19 +9,19 @@ void Application::InitVariables(void)
 	totemMesh->m_m4Model = glm::translate(totemMesh->m_m4Model, vector3(-25.0f, 0.0f, 25.0f));
 
 	totemMesh1 = new MyMesh();
-	totemMesh1->GenerateTotem(2.0f, C_RED);
+	totemMesh1->GenerateTotem(2.0f, C_GREEN);
 	totemMesh1->m_m4Model = glm::translate(totemMesh1->m_m4Model, vector3(25.0f, 0.0f, 25.0f));
 
 	totemMesh2 = new MyMesh();
-	totemMesh2->GenerateTotem(2.0f, C_RED);
+	totemMesh2->GenerateTotem(2.0f, C_BLUE);
 	totemMesh2->m_m4Model = glm::translate(totemMesh2->m_m4Model, vector3(0.0f, 0.0f, 50.0f));
 
 	totemMesh3 = new MyMesh();
-	totemMesh3->GenerateTotem(2.0f, C_RED);
+	totemMesh3->GenerateTotem(2.0f, C_INDIGO);
 	totemMesh3->m_m4Model = glm::translate(totemMesh3->m_m4Model, vector3(-25.0f, 0.0f, 75.0f));
 
 	totemMesh4 = new MyMesh();
-	totemMesh4->GenerateTotem(2.0f, C_RED);
+	totemMesh4->GenerateTotem(2.0f, C_ORANGE);
 	totemMesh4->m_m4Model = glm::translate(totemMesh4->m_m4Model, vector3(25.0f, 0.0f, 75.0f));
 
 	//Make MyMesh object
@@ -31,6 +31,7 @@ void Application::InitVariables(void)
 	playerMesh->GenerateCube(0.3f, C_RED);
 	vector3 newPlayer = playerMesh->boardPosition + vector3(0, .5f, -1);
 	playerMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, newPlayer);
+
 }
 void Application::ProcessKeyboard(sf::Event a_event)
 {
@@ -46,38 +47,103 @@ void Application::ProcessKeyboard(sf::Event a_event)
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(-fSpeed, 0.0f, 0.0f));
 		boardMesh->boardPosition.x += -fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(-fSpeed, 0.0f, 0.0f));
 	}
 		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(fSpeed, 0.0f, 0.0f));
 		boardMesh->boardPosition.x += fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(fSpeed, 0.0f, 0.0f));
 	}
 		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, -fSpeed));
 		boardMesh->boardPosition.z += -fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, -fSpeed));
 	}
 		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, fSpeed));
 		boardMesh->boardPosition.z += fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, fSpeed));
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, fSpeed, 0.0f));
 		boardMesh->boardPosition.y += fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, fSpeed, 0.0f));
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) || sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt))
 	{
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, -fSpeed, 0.0f));
 		boardMesh->boardPosition.y += -fSpeed;
+		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, -fSpeed, 0.0f));
+	}
+
+	//Get a timer
+	static uint uClock = m_pSystem->GenClock();
+	float fTimer = m_pSystem->GetTimeSinceStart(uClock);
+	float fDeltaTime = m_pSystem->GetDeltaTime(uClock);
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	{
+		// pitch counterclockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(1.0f, 0.0f, 0.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+	{
+		// pitch clockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(-1.0f, 0.0f, 0.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		// yaw counterclockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(0.0f, 1.0f, 0.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+	{
+		// yaw clockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(0.0f, -1.0f, 0.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+	{
+		// roll counterclockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(0.0f, 0.0f, 1.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
+	{
+		// roll clockwise
+		quaternion q1;
+		quaternion q2 = glm::angleAxis(glm::radians(359.9f), vector3(0.0f, 0.0f, -1.0f));
+		float fPercentage = MapValue(fTimer, 0.0f, 1.0f, 0.0f, 1.0f);
+		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
+		boardMesh->m_m4Model = glm::toMat4(qSLERP);
 	}
 
 	vector3 newCamera = boardMesh->boardPosition - vector3(0, 0, 5);

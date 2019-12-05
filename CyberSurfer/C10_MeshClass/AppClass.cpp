@@ -129,13 +129,6 @@ void Application::ProcessKeyboard(sf::Event a_event)
 		boardMesh->m_m4Model = glm::toMat4(qSLERP);
 	}
 
-	
-
-
-	vector3 newCamera = boardMesh->boardPosition - vector3(0, 0, 5);
-	vector3 newPlayer = playerMesh->boardPosition + vector3(0, .5f, -1);
-	playerMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, newPlayer);
-	m_pCameraMngr->SetPositionTargetAndUpward(newCamera, boardMesh->boardPosition, AXIS_Y);
 
 	if (!startedRace)
 	{
@@ -150,8 +143,7 @@ void Application::Update(void)
 	//Is the arcball active?
 	//ArcBall();
 
-	vector3 newCamera = boardMesh->boardPosition - vector3(0, -2, 7);
-	m_pCameraMngr->SetPositionTargetAndUpward(newCamera, boardMesh->boardPosition, AXIS_Y);
+	
 	
 	//Is the first person camera active?
 	CameraRotation();
@@ -169,9 +161,21 @@ void Application::Update(void)
 	//TODO
 
 	//adjust velocity vector to forward vector of Mat4
+	//(not done)
 
-	//apply velocity vector
+
+	//apply velocity vector to model matrix and positon vector
+	boardMesh->boardPosition += boardMesh->boardVelocity;
 	boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, boardMesh->boardVelocity);
+
+
+	//adjust camera
+	vector3 newCamera = boardMesh->boardPosition - vector3(0, -2, 7);
+	vector3 newPlayer = playerMesh->boardPosition + vector3(0, .5f, -1);
+	playerMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, newPlayer);
+	m_pCameraMngr->SetPositionTargetAndUpward(newCamera, boardMesh->boardPosition, AXIS_Y);
+
+
 
 }
 void Application::Display(void)

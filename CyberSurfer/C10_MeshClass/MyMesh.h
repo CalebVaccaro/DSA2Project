@@ -23,6 +23,7 @@ class MyMesh
 public:
 	matrix4 m_m4Model = glm::scale(IDENTITY_M4, vector3(1.0f, 1.0f, 1.0f));//Identity matrix
 	vector3 boardPosition = vector3(0.0f, 0.0f, 0.0f);
+	vector3 boardVelocity = vector3(0.0f, 0.0f, 0.0f);
 	/*
 	USAGE: Initialize the object's fields
 	ARGUMENTS: ---

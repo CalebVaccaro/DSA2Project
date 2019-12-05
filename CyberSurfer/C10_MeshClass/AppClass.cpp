@@ -35,9 +35,11 @@ void Application::InitVariables(void)
 }
 void Application::ProcessKeyboard(sf::Event a_event)
 {
+
 	if (a_event.key.code == sf::Keyboard::Key::Escape)//Event says I pressed the Escape key
 		m_bRunning = false;
 
+	float fAccel = 0.01f; //Added accel
 	float fSpeed = 0.1f;
 	float fMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
@@ -47,39 +49,20 @@ void Application::ProcessKeyboard(sf::Event a_event)
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		boardMesh->boardPosition.x += -fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(-fSpeed, 0.0f, 0.0f));
+		boardMesh->boardVelocity.x += -fAccel;
+		//boardMesh->boardPosition.x += -fSpeed;  // Don't do position here
+		//boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(-fSpeed, 0.0f, 0.0f));  //Move this to the end
 	}
 		
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		boardMesh->boardPosition.x += fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(fSpeed, 0.0f, 0.0f));
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { boardMesh->boardVelocity.x += +fAccel; }
 		
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		boardMesh->boardPosition.z += -fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, -fSpeed));
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) { boardMesh->boardVelocity.z += -fAccel; }
 		
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		boardMesh->boardPosition.z += fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, 0.0f, fSpeed));
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {	boardMesh->boardVelocity.z += +fAccel; }
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
-	{
-		boardMesh->boardPosition.y += fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, fSpeed, 0.0f));
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {	boardMesh->boardVelocity.y += +fAccel; }
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) || sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt))
-	{
-		boardMesh->boardPosition.y += -fSpeed;
-		boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(0.0f, -fSpeed, 0.0f));
-	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) || sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt)) { boardMesh->boardVelocity.y += -fAccel; }
 
 	//Get a timer
 	static uint uClock = m_pSystem->GenClock();
@@ -146,6 +129,9 @@ void Application::ProcessKeyboard(sf::Event a_event)
 		boardMesh->m_m4Model = glm::toMat4(qSLERP);
 	}
 
+	
+
+
 	vector3 newCamera = boardMesh->boardPosition - vector3(0, 0, 5);
 	vector3 newPlayer = playerMesh->boardPosition + vector3(0, .5f, -1);
 	playerMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, newPlayer);
@@ -179,6 +165,14 @@ void Application::Update(void)
 		}
 	}
 	
+	//Updating velocity here cause I don't want to mess with too much
+	//TODO
+
+	//adjust velocity vector to forward vector of Mat4
+
+	//apply velocity vector
+	boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, boardMesh->boardVelocity);
+
 }
 void Application::Display(void)
 {

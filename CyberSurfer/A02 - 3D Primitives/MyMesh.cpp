@@ -330,7 +330,28 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	float radiansPerSection = 2 * PI / (float)a_nSubdivisions;
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		//I understand we generally aren't supposed to use single letter variable names, but there really isn't a more descriptive 
+		//method of labeling these points
+		glm::vec3 A(a_fInnerRadius * cos(radiansPerSection * i), a_fInnerRadius * sin(radiansPerSection * i), 0);
+		glm::vec3 B(a_fInnerRadius * cos(radiansPerSection * (i + 1)), a_fInnerRadius * sin(radiansPerSection * (i + 1)), 0);
+		glm::vec3 C(a_fOuterRadius * cos(radiansPerSection * i), a_fOuterRadius * sin(radiansPerSection * i), 0);
+		glm::vec3 D(a_fOuterRadius * cos(radiansPerSection * (i + 1)), a_fOuterRadius * sin(radiansPerSection * (i + 1)), 0);
+
+		glm::vec3 E(a_fInnerRadius * cos(radiansPerSection * i), a_fInnerRadius * sin(radiansPerSection * i), a_fHeight);
+		glm::vec3 F(a_fInnerRadius * cos(radiansPerSection * (i + 1)), a_fInnerRadius * sin(radiansPerSection * (i + 1)), a_fHeight);
+		glm::vec3 G(a_fOuterRadius * cos(radiansPerSection * i), a_fOuterRadius * sin(radiansPerSection * i), a_fHeight);
+		glm::vec3 H(a_fOuterRadius * cos(radiansPerSection * (i + 1)), a_fOuterRadius * sin(radiansPerSection * (i + 1)), a_fHeight);
+
+		AddQuad(A, B, C, D);
+		AddQuad(F, E, H, G);
+		AddQuad(B, A, F, E);
+		AddQuad(H, G, D, C);
+	}
+
+
 	// -------------------------------
 
 	// Adding information about color

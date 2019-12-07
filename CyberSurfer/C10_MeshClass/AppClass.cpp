@@ -4,6 +4,7 @@
 void Application::InitVariables(void)
 {
 	// VERY MESSY WILL FIX
+	//If you don't need them jsut move it to InitRacetrack - Michael
 	totemMesh = new MyMesh();
 	totemMesh->GenerateTotem(2.0f, C_RED);
 	totemMesh->m_m4Model = glm::translate(totemMesh->m_m4Model, vector3(-25.0f, 0.0f, 25.0f));
@@ -32,6 +33,36 @@ void Application::InitVariables(void)
 	vector3 newPlayer = playerMesh->boardPosition + vector3(0, .5f, -1);
 	playerMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, newPlayer);
 
+	InitRacetrack();
+	
+}
+void Application::InitRacetrack(void)
+{
+	//making hoops, I'm storing the inner and outer radius for collision detection
+	fInnerRad = 2.75f;
+	fOuterRad = 3.0f;
+
+	
+	for (int i = 0; i < 10; i++)
+	{
+		//just gonna make a giant line of them, we can put in better positions later
+		v3HoopPositions[i] = vector3(0.0f, 0.0f, 20.0f * (i + 1));
+		MyMesh* tempMesh = new MyMesh();
+		if(i == 0)
+			tempMesh->GenerateTube(fOuterRad, fInnerRad, 0.25f, 10, C_GREEN);
+		else if(i == 9)
+			tempMesh->GenerateTube(fOuterRad, fInnerRad, 0.25f, 10, C_RED);
+		else
+			tempMesh->GenerateTube(fOuterRad, fInnerRad, 0.25f, 10, C_BLUE);
+		mHoops[i] = tempMesh;
+	}
+
+	//place hoops at correct locations
+	for (int i = 0; i < 10; i++)
+	{
+		mHoops[i]->m_m4Model = glm::translate(mHoops[i]->m_m4Model, v3HoopPositions[i]);
+	}
+	
 }
 void Application::ProcessKeyboard(sf::Event a_event)
 {
@@ -129,11 +160,8 @@ void Application::ProcessKeyboard(sf::Event a_event)
 		boardMesh->m_m4Model = glm::toMat4(qSLERP);
 	}
 
-
-	if (!startedRace)
-	{
-		startedRace = true;
-	}
+	
+	//if (!startedRace) { startedRace = true; }
 }
 void Application::Update(void)
 {
@@ -157,6 +185,8 @@ void Application::Update(void)
 		}
 	}
 	
+	CheckRaceProgress();
+
 	//Updating velocity here cause I don't want to mess with too much
 	//TODO
 
@@ -178,6 +208,41 @@ void Application::Update(void)
 
 
 }
+void Application::CheckRaceProgress(void)
+{
+	/*
+	Just doing a sphere trace between player position and the center of each hoop
+	Its technically possible to cheat here, but I'm just trying to get it to work
+	We're only going to check against the current target hoop to A: avoid people skipping ahead
+	And B: Vastly reduce the number of calculation we need to do
+	*/
+
+	float disX = (boardMesh->boardPosition.x - v3HoopPositions[hoopNum].x) * (boardMesh->boardPosition.x - v3HoopPositions[hoopNum].x);
+	float disY = (boardMesh->boardPosition.y - v3HoopPositions[hoopNum].y) * (boardMesh->boardPosition.y - v3HoopPositions[hoopNum].y);
+	float disZ = (boardMesh->boardPosition.z - v3HoopPositions[hoopNum].z) * (boardMesh->boardPosition.z - v3HoopPositions[hoopNum].z);
+
+	//squaring is being werid here, hense the layout
+	float crntDist = glm::sqrt(disX + disY + disZ);
+
+	if (crntDist < fInnerRad)
+	{
+		if (hoopNum == 0)
+		{
+			//start race in the first hoop
+			startedRace = true;
+		}
+		if (hoopNum < 9)
+		{
+			//update for each one farther along
+			hoopNum++;
+		}
+		else
+		{
+			completedRace = true;
+		}
+	}
+
+}
 void Application::Display(void)
 {
 	// Clear the screen
@@ -188,6 +253,13 @@ void Application::Display(void)
 	totemMesh2->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), totemMesh2->m_m4Model);
 	totemMesh3->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), totemMesh3->m_m4Model);
 	totemMesh4->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), totemMesh4->m_m4Model);
+
+	//Draw Hoops
+
+	for (int i = 0; i < 10; i++)
+	{
+		mHoops[i]->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), mHoops[i]->m_m4Model);
+	}
 
 	//! Wanted Box Render
 	boardMesh->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), boardMesh->m_m4Model);
@@ -214,6 +286,15 @@ void Application::Release(void)
 	{
 		delete totemMesh;
 		totemMesh = nullptr;
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		if (mHoops[i] != nullptr)
+		{
+			delete mHoops[i];
+			mHoops[i] = nullptr;
+		}
+			
 	}
 	SafeDelete(boardMesh);
 	//release GUI

@@ -29,6 +29,8 @@ void Application::DrawGUI(void)
 		m_pMeshMngr->PrintLine("Completed Race: false", C_GREEN);
 	}
 
+	m_pMeshMngr->PrintLine("Current Hoop Number: " + std::to_string(hoopNum + 1) , C_BLUE);
+
 	//m_pMeshMngr->Print("						");
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(m_pSystem->GetFPS()), C_RED);

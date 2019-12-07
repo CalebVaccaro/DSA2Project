@@ -27,7 +27,19 @@ class Application
 	MyMesh* totemMesh4 = nullptr;
 	
 
-	String m_sProgrammer = "Caleb Vaccaro - cxv9523@rit.edu";
+	//Hoop variables, I see no reason to make the Meshes pointers, we won't accessing them outside of AppClass
+
+	float fInnerRad;
+	float fOuterRad;
+	vector3 v3HoopPositions[10];
+	MyMesh *mHoops[10]; 
+	//glm::mat4 m4HoopRotation[10]; //Might do this with a vec3, IDK, just not going to bother for now
+
+	//Manage Hoop GUI
+	int hoopNum = 0;
+
+
+	String m_sProgrammer = "Caleb Vaccaro - cxv9523@rit.edu, Michael Aspinall - mka3882@g.rit.edu";
 private:
 	static ImGuiObject gui; //GUI object
 
@@ -114,6 +126,13 @@ private:
 	ARGUMENTS: ---
 	OUTPUT: ---
 	*/
+	void InitRacetrack(void);
+	/*
+	USEAGE: Makes all racetrack objects, seperated from init Variables for readability
+	ARGS: ---
+	OUTPUT: ---
+	*/
+
 	void ReadConfig(void);
 	/*
 	USAGE: Writes the configuration of the application to a file
@@ -159,6 +178,12 @@ private:
 	ARGUMENTS:
 	OUTPUT: ---
 	*/
+
+	void CheckRaceProgress(void);
+	/*
+	USEAGE: Updates GUI with race info and checks for 
+	*/
+
 	void ReleaseControllers(void);
 #pragma endregion
 

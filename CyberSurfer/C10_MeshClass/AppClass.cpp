@@ -25,7 +25,7 @@ void Application::InitVariables(void)
 	totemMesh4->GenerateTotem(2.0f, C_ORANGE);
 	totemMesh4->m_m4Model = glm::translate(totemMesh4->m_m4Model, vector3(25.0f, 0.0f, 75.0f));
 
-	//Make MyMesh object
+	//Make Hoverboard object
 	boardMesh = new MyMesh();
 	boardMesh->GenerateBoard(1.0f, C_WHITE);
 	playerMesh = new MyMesh();
@@ -78,12 +78,9 @@ void Application::ProcessKeyboard(sf::Event a_event)
 	if (fMultiplier)
 		fSpeed *= 5.0f;
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		boardMesh->boardVelocity.x += -fAccel;
-		//boardMesh->boardPosition.x += -fSpeed;  // Don't do position here
-		//boardMesh->m_m4Model = glm::translate(boardMesh->m_m4Model, vector3(-fSpeed, 0.0f, 0.0f));  //Move this to the end
-	}
+	#pragma region BoardMovement
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) { boardMesh->boardVelocity.x += -fAccel;}
 		
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { boardMesh->boardVelocity.x += +fAccel; }
 		
@@ -99,6 +96,7 @@ void Application::ProcessKeyboard(sf::Event a_event)
 	static uint uClock = m_pSystem->GenClock();
 	float fTimer = m_pSystem->GetTimeSinceStart(uClock);
 	float fDeltaTime = m_pSystem->GetDeltaTime(uClock);
+	
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 	{
@@ -159,7 +157,7 @@ void Application::ProcessKeyboard(sf::Event a_event)
 		quaternion qSLERP = glm::mix(q1, q2, fPercentage);
 		boardMesh->m_m4Model = glm::toMat4(qSLERP);
 	}
-
+#pragma endregion
 	
 	//if (!startedRace) { startedRace = true; }
 }
@@ -171,8 +169,6 @@ void Application::Update(void)
 	//Is the arcball active?
 	//ArcBall();
 
-	
-	
 	//Is the first person camera active?
 	CameraRotation();
 	
@@ -192,7 +188,6 @@ void Application::Update(void)
 
 	//adjust velocity vector to forward vector of Mat4
 	//(not done)
-
 
 	//apply velocity vector to model matrix and positon vector
 	boardMesh->boardPosition += boardMesh->boardVelocity;
